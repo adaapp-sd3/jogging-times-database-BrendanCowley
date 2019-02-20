@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Jog Times</title>
+
+    <!-- Tailwind.css is a CSS library. Read the docs here: -->
+    <!-- https://tailwindcss.com/docs/what-is-tailwind -->
+    <link rel="stylesheet" href="/tailwind.css" />
+  </head>
+  <body class="bg-grey-lightest">
+    <header class="fixed pin-x pin-t bg-purple shadow text-white">
+      <div
+        class="mx-auto h-16 p-4 flex items-center justify-between"
+        style="width: 800px"
+      >
+      <h2><a href="/times" class="text-white no-underline">Jog Times</a></h2>
+        <div>
+          Signed in as {{ user.name }} ({{ user.email }})
+          <a
+            href="/sign-out"
+            class="text-white border border-white rounded p-2 no-underline hover:bg-purple-light ml-4"
+          >
+            Sign Out
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main
+      style="width: 800px"
+      class="mx-auto mt-16 pt-4 flex flex-col justify-center "
+    >
+      <section class="flex items-center">
+          <h2>Users</h2>
+        {{#each users}}
+        <form
+        class="flex-auto w-64 m-4 p-5 bg-white shadow rounded-lg text-black no-underline"
+        method="POST"
+        action="/account"
+      >
+          <p class="text-xl mt-2" name="name" value="{{ name }}">
+            {{ name }}
+          </p>
+          <button class="border rounded p-2 no-underline ml-4" type="submit" name="id" value="{{ id }}">follow</button>
+        </form>
+        {{/each}}
+      </section>
+
+      <section
+        class="flex flex-wrap border border-grey-light border-l-0 border-r-0 border-b-0 mt-6 pt-6"
+      >
+      <h2>Followers</h2>
+        {{#each followers}}
+          <h3 class="flex-auto w-64 m-4 p-5 bg-white shadow rounded-lg text-black no-underline">
+            {{ name }}
+          </h3>
+        {{/each}}
+      </section>
+
+      <section
+        class="flex flex-wrap border border-grey-light border-l-0 border-r-0 border-b-0 mt-6 pt-6"
+      >
+      <h2>Following</h2>
+        {{#each following}}
+          <h3 class="flex-auto w-64 m-4 p-5 bg-white shadow rounded-lg text-black no-underline">
+            {{ name }}
+          </h3>
+        {{/each}}
+      </section>
+    </main>
+  </body>
+</html>

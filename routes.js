@@ -2,13 +2,23 @@ var express = require('express')
 var bcrypt = require('bcryptjs')
 
 var User = require('./models/User')
+var Follower = require('./models/Follower')
+var Jog = require('./models/Jog')
 
 var routes = new express.Router()
 
 var saltRounds = 10
 
+// function formatDateForHTML(date) {
+//   return new Date(date).toISOString().slice(0, -8)
+// }
+
 function formatDateForHTML(date) {
-  return new Date(date).toISOString().slice(0, -8)
+	const formattedDate = new Date(date)
+	console.log(formattedDate.toLocaleString())
+  return formattedDate.toLocaleString('en-GB', {
+		day: 'numeric', month: 'numeric', year: '2-digit', hour: '2-digit', minute:'2-digit'
+	})
 }
 
 // main page
@@ -24,6 +34,13 @@ routes.get('/', function(req, res) {
 
 // show the create account page
 routes.get('/create-account', function(req, res) {
+  var loggedInUser = User.findById(req.cookies.userId)
+
+  if(loggedInUser){
+    res.redirect('/times')
+    return
+  }
+
   res.render('create-account.html')
 })
 
@@ -48,6 +65,12 @@ routes.post('/create-account', function(req, res) {
 
 // show the sign-in page
 routes.get('/sign-in', function(req, res) {
+  var loggedInUser = User.findById(req.cookies.userId)
+
+  if(loggedInUser){
+    res.redirect('/times')
+    return
+  }
   res.render('sign-in.html')
 })
 
@@ -92,10 +115,16 @@ routes.get('/sign-out', function(req, res) {
 routes.get('/times', function(req, res) {
   var loggedInUser = User.findById(req.cookies.userId)
 
+  if(!loggedInUser){
+    res.redirect('/sign-in')
+    return
+  }
+
   // fake stats - TODO: get real stats from the database
-  var totalDistance = 13.45
-  var avgSpeed = 5.42
-  var totalTime = 8.12322
+  reducer = (a, b) => a + b;
+  var totalDistance = Jog.findByUser(req.cookies.userId).map(item => item.distance).reduce(reducer, 0);
+  var totalTime = Jog.findByUser(req.cookies.userId).map(item => item.duration).reduce(reducer, 0);
+  var avgSpeed = totalDistance/totalTime;
 
   res.render('list-times.html', {
     user: loggedInUser,
@@ -106,29 +135,7 @@ routes.get('/times', function(req, res) {
     },
 
     // fake times: TODO: get the real jog times from the db
-    times: [
-      {
-        id: 1,
-        startTime: '4:36pm 1/11/18',
-        duration: 12.23,
-        distance: 65.43,
-        avgSpeed: 5.34
-      },
-      {
-        id: 2,
-        startTime: '2:10pm 3/11/18',
-        duration: 67.4,
-        distance: 44.43,
-        avgSpeed: 0.66
-      },
-      {
-        id: 3,
-        startTime: '3:10pm 4/11/18',
-        duration: 67.4,
-        distance: 44.43,
-        avgSpeed: 0.66
-      }
-    ]
+    times: Jog.findByUser(req.cookies.userId).map(jog => ({...jog, startTime: formatDateForHTML(jog.startTime), duration: jog.duration.toFixed(2), distance: jog.distance.toFixed(2)}))
   })
 })
 
@@ -136,6 +143,13 @@ routes.get('/times', function(req, res) {
 routes.get('/times/new', function(req, res) {
   // this is hugely insecure. why?
   var loggedInUser = User.findById(req.cookies.userId)
+  console.log(Jog.findByUser(req.cookies.userId))
+  console.log(req.cookies.userId)
+
+  if(!loggedInUser){
+    res.redirect('/sign-in')
+    return
+  }
 
   res.render('create-time.html', {
     user: loggedInUser
@@ -149,25 +163,27 @@ routes.post('/times/new', function(req, res) {
   console.log('create time', form)
 
   // TODO: save the new time
-
+  Jog.insert(req.cookies.userId, form.startTime, form.distance, form.duration)
   res.redirect('/times')
 })
 
 // show the edit time form for a specific time
 routes.get('/times/:id', function(req, res) {
+  var loggedInUser = User.findById(req.cookies.userId)
   var timeId = req.params.id
   console.log('get time', timeId)
 
   // TODO: get the real time for this id from the db
-  var jogTime = {
-    id: timeId,
-    startTime: formatDateForHTML('2018-11-4 15:17'),
-    duration: 67.4,
-    distance: 44.43
-  }
+  var jogTime = Jog.findById(timeId)
 
   res.render('edit-time.html', {
-    time: jogTime
+      user: loggedInUser,
+      time: {
+        id: jogTime.id,
+        startTime: jogTime.startTime,
+        duration: jogTime.duration.toFixed(2),
+        distance: jogTime.distance.toFixed(2)
+      }
   })
 })
 
@@ -182,7 +198,7 @@ routes.post('/times/:id', function(req, res) {
   })
 
   // TODO: edit the time in the db
-
+  Jog.updateById(form.startTime, form.distance, form.duration, timeId)
   res.redirect('/times')
 })
 
@@ -192,8 +208,32 @@ routes.get('/times/:id/delete', function(req, res) {
   console.log('delete time', timeId)
 
   // TODO: delete the time
-
+  Jog.deleteById(timeId)
   res.redirect('/times')
+})
+
+routes.get('/account', function (req, res) {
+  var loggedInUser = User.findById(req.cookies.userId)
+  var users = User.findAllButYou(req.cookies.userId).filter(user => !Follower.findFollower(req.cookies.userId, user.id))
+  var followers = Follower.findFollowers(req.cookies.userId)
+  var following = Follower.findFollowing(req.cookies.userId)
+  console.log(following)
+  res.render('account-details.html', {
+    user: loggedInUser,
+    users: users,
+    followers: followers,
+    following: following
+  })
+})
+
+routes.post('/account', function(req, res) {
+  var form = req.body;
+
+  if(form.id){
+    Follower.insert(req.cookies.userId, form.id)
+    res.redirect('/account')
+  }
+
 })
 
 module.exports = routes
