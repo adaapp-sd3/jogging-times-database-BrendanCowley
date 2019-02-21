@@ -15,7 +15,13 @@
         style="width: 800px"
       >
       <h2><a href="/times" class="text-white no-underline">Jog Times</a></h2>
-        <div>
+      <a
+          href="/timeline"
+          class="text-white border border-white rounded p-2 no-underline hover:bg-purple-light ml-4"
+        >
+          Timeline
+        </a>
+      <div>
           Signed in as {{ user.name }} ({{ user.email }})
           <a
             href="/sign-out"
@@ -68,6 +74,18 @@
           </h3>
         {{/each}}
       </section>
+
+      <section
+        class="flex flex-wrap border border-grey-light border-l-0 border-r-0 border-b-0 mt-6 pt-6"
+      >
+         <form
+            method="POST"
+            action="/account"
+         >
+            <button type="submit" name="delete" value="delete" class="flex-auto w-64 m-4 p-5 bg-purple-light shadow rounded-lg text-3xl text-white no-underline flex items-center justify-center text-center">
+                Delete Account
+            </button>
+        </form>
     </main>
   </body>
 </html>

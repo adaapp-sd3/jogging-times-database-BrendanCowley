@@ -12,9 +12,21 @@
     <header class="fixed pin-x pin-t bg-purple shadow text-white">
       <div
         class="mx-auto h-16 p-4 flex items-center justify-between"
-        style="width: 800px"
+        style="width: 1000px"
       >
         <h2><a href="/times" class="text-white no-underline">Jog Times</a></h2>
+        <a
+          href="/account"
+          class="text-white border border-white rounded p-2 no-underline hover:bg-purple-light ml-4"
+        >
+          Account
+        </a>
+        <a
+          href="/timeline"
+          class="text-white border border-white rounded p-2 no-underline hover:bg-purple-light ml-4"
+        >
+          Timeline
+        </a>
         <div>
           Signed in as {{ user.name }} ({{ user.email }})
           <a

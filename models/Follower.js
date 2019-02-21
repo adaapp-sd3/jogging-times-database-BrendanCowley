@@ -3,13 +3,18 @@ var db = require("../database");
 var insertFollower = db.prepare(
   "INSERT INTO follower (user_id, follower_id) VALUES (?, ?)"
 );
-var selectFollowerById = db.prepare("SELECT * FROM follower WHERE user_id = ? AND follower_id = ?");
-var selectFollowersById = db.prepare('SELECT * FROM follower JOIN user ON follower.follower_id = user.id WHERE user_id = ?');
-var selectFollowingById = db.prepare("SELECT * FROM follower JOIN user ON follower.user_id = user.id WHERE follower_id = ?");
-
-// var selectFollowerByEmail = db.prepare(
-//   "SELECT * FROM follower WHERE email = ?"
-// );
+var selectFollowerById = db.prepare(
+  "SELECT * FROM follower WHERE user_id = ? AND follower_id = ?"
+);
+var selectFollowersById = db.prepare(
+  "SELECT * FROM follower JOIN user ON follower.follower_id = user.id WHERE user_id = ?"
+);
+var selectFollowingById = db.prepare(
+  "SELECT * FROM follower JOIN user ON follower.user_id = user.id WHERE follower_id = ?"
+);
+var selectJogsByFollowed = db.prepare(
+  "SELECT * FROM follower JOIN jog ON follower.user_id = jog.user_id OR follower.follower_id = jog.user_id JOIN user ON user.id = jog.user_id WHERE follower_id = ? ORDER BY jog.start_time DESC"
+);
 
 class Follower {
   static insert(userId, followerId) {
@@ -19,14 +24,23 @@ class Follower {
     return followerId;
   }
 
-  static findFollower(userId, followerId){
-    var follower = selectFollowerById.get(userId, followerId)
+  static findFollower(userId, followerId) {
+    var row = selectFollowerById.get(userId, followerId);
 
-    if(follower){
-      return new Follower(follower)
+    if (row) {
+      return new Follower(row);
+    } else {
+      return null;
     }
-    else {
-      return null
+  }
+
+  static findAllByFollowed(userId) {
+    var times = selectJogsByFollowed.all(userId);
+
+    if (times) {
+      return times;
+    } else {
+      return null;
     }
   }
 
@@ -34,7 +48,7 @@ class Follower {
     var followers = selectFollowersById.all(userId);
 
     if (followers) {
-      return followers
+      return followers;
     } else {
       return null;
     }
@@ -44,7 +58,7 @@ class Follower {
     var following = selectFollowingById.all(followerId);
 
     if (following) {
-      return following
+      return following;
     } else {
       return null;
     }

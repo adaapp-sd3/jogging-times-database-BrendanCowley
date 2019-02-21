@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Jog Times</title>
+
+    <!-- Tailwind.css is a CSS library. Read the docs here: -->
+    <!-- https://tailwindcss.com/docs/what-is-tailwind -->
+    <link rel="stylesheet" href="/tailwind.css" />
+  </head>
+  <body class="bg-grey-lightest">
+    <header class="fixed pin-x pin-t bg-purple shadow text-white">
+      <div
+        class="mx-auto h-16 p-4 flex items-center justify-between"
+        style="width: 800px"
+      >
+        <h2><a href="/times" class="text-white no-underline">Jog Times</a></h2>
+        <a
+          href="/account"
+          class="text-white border border-white rounded p-2 no-underline hover:bg-purple-light ml-4"
+        >
+          Account
+        </a>
+        <div>
+          Signed in as {{ user.name }} ({{ user.email }})
+          <a
+            href="/sign-out"
+            class="text-white border border-white rounded p-2 no-underline hover:bg-purple-light ml-4"
+          >
+            Sign Out
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main
+      style="width: 800px"
+      class="mx-auto mt-16 pt-4 flex flex-col justify-center "
+    >
+      <section
+        class="flex flex-wrap border border-grey-light border-l-0 border-r-0 border-b-0 mt-6 pt-6"
+      >
+        <h2>Timeline</h2>
+        {{#each jogs}}
+        <div
+          class="flex-auto w-64 m-4 p-5 bg-white shadow rounded-lg text-black no-underline"
+        >
+          <h3 class="text-grey-darker uppercase text-base font-normal">
+            {{ name }}
+          </h3>
+          <h3 class="text-grey-darker uppercase text-base font-normal">
+            {{ start_time }}
+          </h3>
+          <p class="text-xl mt-2">
+            {{ distance }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              km
+            </span>
+            in {{ duration }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              hrs
+            </span>
+          </p>
+          <p class="text-xl mt-1">
+            Avg. speed: {{ avgSpeed }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              km/hr
+            </span>
+          </p>
+        </div>
+        {{/each}}
+      </section>
+      <section
+        class="flex flex-wrap border border-grey-light border-l-0 border-r-0 border-b-0 mt-6 pt-6"
+      >
+        <h2>Speed Ranking</h2>
+        {{#each speeds}}
+        <div
+          class="flex-auto w-64 m-4 p-5 bg-white shadow rounded-lg text-black no-underline"
+        >
+          <h3 class="text-grey-darker uppercase text-base font-normal">
+            {{ name }}
+          </h3>
+          <h3 class="text-grey-darker uppercase text-base font-normal">
+            {{ start_time }}
+          </h3>
+          <p class="text-xl mt-2">
+            {{ distance }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              km
+            </span>
+            in {{ duration }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              hrs
+            </span>
+          </p>
+          <p class="text-xl mt-1">
+            Avg. speed: {{ avgSpeed }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              km/hr
+            </span>
+          </p>
+        </div>
+        {{/each}}
+      </section>
+      <section
+        class="flex flex-wrap border border-grey-light border-l-0 border-r-0 border-b-0 mt-6 pt-6"
+      >
+        <h2>Distance Ranking</h2>
+        {{#each distance}}
+        <div
+          class="flex-auto w-64 m-4 p-5 bg-white shadow rounded-lg text-black no-underline"
+        >
+          <h3 class="text-grey-darker uppercase text-base font-normal">
+            {{ name }}
+          </h3>
+          <h3 class="text-grey-darker uppercase text-base font-normal">
+            {{ start_time }}
+          </h3>
+          <p class="text-xl mt-2">
+            {{ distance }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              km
+            </span>
+            in {{ duration }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              hrs
+            </span>
+          </p>
+          <p class="text-xl mt-1">
+            Avg. speed: {{ avgSpeed }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              km/hr
+            </span>
+          </p>
+        </div>
+        {{/each}}
+      </section>
+      <section
+        class="flex flex-wrap border border-grey-light border-l-0 border-r-0 border-b-0 mt-6 pt-6"
+      >
+        <h2>Duration Ranking</h2>
+        {{#each duration}}
+        <div
+          class="flex-auto w-64 m-4 p-5 bg-white shadow rounded-lg text-black no-underline"
+        >
+          <h3 class="text-grey-darker uppercase text-base font-normal">
+            {{ name }}
+          </h3>
+          <h3 class="text-grey-darker uppercase text-base font-normal">
+            {{ start_time }}
+          </h3>
+          <p class="text-xl mt-2">
+            {{ distance }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              km
+            </span>
+            in {{ duration }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              hrs
+            </span>
+          </p>
+          <p class="text-xl mt-1">
+            Avg. speed: {{ avgSpeed }}
+            <span
+              class="uppercase text-sm text-grey-darker font-semibold -ml-1"
+            >
+              km/hr
+            </span>
+          </p>
+        </div>
+        {{/each}}
+      </section>
+    </main>
+  </body>
+</html>

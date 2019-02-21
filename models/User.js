@@ -8,6 +8,7 @@ var insertUser = db.prepare(
 var selectUserById = db.prepare("SELECT * FROM user WHERE id = ?");
 var selectAllUsersButYou = db.prepare("SELECT * FROM user WHERE NOT id=?");
 var selectUserByEmail = db.prepare("SELECT * FROM user WHERE email = ?");
+var deleteUserById = db.prepare("DELETE FROM user WHERE id = ?");
 
 class User {
   static insert(name, email, passwordHash) {
@@ -28,6 +29,12 @@ class User {
     } else {
       return null;
     }
+  }
+
+  static deleteById(id) {
+    var info = deleteUserById.run(id);
+
+    return info;
   }
 
   static findAllButYou(id) {
